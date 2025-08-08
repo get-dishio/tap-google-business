@@ -6,7 +6,7 @@ from typing import Iterable, Optional, Any, Dict
 from singer_sdk import typing as th
 from tap_google_business.client import GoogleBusinessStream, GoogleBusinessPerformanceStream
 
-SCHEMAS_DIR = Path(__file__).parent.parent / Path("./schemas")
+SCHEMAS_DIR = Path(__file__).parent.parent / "schemas"
 
 class AccountsStream(GoogleBusinessStream):
     """Accounts stream."""

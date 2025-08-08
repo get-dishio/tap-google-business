@@ -35,3 +35,4 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.scripts]
 # CLI declaration
 tap-google-business = 'tap_google_business.tap:TapGoogleBusiness.cli'
+tap-google-business-v2 = 'tap_google_business.tap:TapGoogleBusiness.cli'

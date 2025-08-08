@@ -6,8 +6,6 @@ from typing import Iterable, Optional, Any, Dict
 from singer_sdk import typing as th
 from tap_google_business.client import GoogleBusinessStream, GoogleBusinessPerformanceStream
 
-SCHEMAS_DIR = Path(__file__).parent.parent / "schemas"
-
 class AccountsStream(GoogleBusinessStream):
     """Accounts stream."""
 
@@ -91,7 +89,45 @@ class LocationsStream(GoogleBusinessStream):
     path = "/{account_name}/locations"
     primary_keys = ["name"]
     records_jsonpath = "$.locations[*]"
-    schema_filepath = SCHEMAS_DIR / "locations.json"
+    schema = th.PropertiesList(
+        th.Property("name", th.StringType),
+        th.Property("languageCode", th.StringType),
+        th.Property("storeCode", th.StringType),
+        th.Property("title", th.StringType),
+        th.Property("phoneNumbers", th.ObjectType(
+            th.Property("primaryPhone", th.StringType),
+            th.Property("additionalPhones", th.ArrayType(th.StringType)),
+        )),
+        th.Property("categories", th.ObjectType(
+            th.Property("primaryCategory", th.ObjectType(
+                th.Property("name", th.StringType),
+                th.Property("displayName", th.StringType),
+            )),
+            th.Property("additionalCategories", th.ArrayType(th.ObjectType(
+                th.Property("name", th.StringType),
+                th.Property("displayName", th.StringType),
+            ))),
+        )),
+        th.Property("storefrontAddress", th.ObjectType(
+            th.Property("revision", th.IntegerType),
+            th.Property("regionCode", th.StringType),
+            th.Property("languageCode", th.StringType),
+            th.Property("postalCode", th.StringType),
+            th.Property("sortingCode", th.StringType),
+            th.Property("administrativeArea", th.StringType),
+            th.Property("locality", th.StringType),
+            th.Property("sublocality", th.StringType),
+            th.Property("addressLines", th.ArrayType(th.StringType)),
+            th.Property("recipients", th.ArrayType(th.StringType)),
+            th.Property("organization", th.StringType),
+        )),
+        th.Property("websiteUri", th.StringType),
+        th.Property("labels", th.ArrayType(th.StringType)),
+        th.Property("latlng", th.ObjectType(
+            th.Property("latitude", th.NumberType),
+            th.Property("longitude", th.NumberType),
+        )),
+    ).to_dict()
 
     def get_child_context(self, record: dict, context: Optional[dict]) -> dict:
         """Return a context dictionary for child streams."""
@@ -123,7 +159,30 @@ class MultiDailyMetricsTimeSeriesStream(GoogleBusinessPerformanceStream):
     path = "/{location_name}:fetchMultiDailyMetricsTimeSeries"
     primary_keys = ["location_name"]
     records_jsonpath = "$.multiDailyMetricTimeSeries[*]"
-    schema_filepath = SCHEMAS_DIR / "multi_daily_metrics_time_series.json"
+    schema = th.PropertiesList(
+        th.Property("dailyMetricTimeSeries", th.ArrayType(th.ObjectType(
+            th.Property("dailyMetric", th.StringType),
+            th.Property("dailySubEntityType", th.ObjectType(
+                th.Property("dayOfWeek", th.StringType),
+                th.Property("timeOfDay", th.ObjectType(
+                    th.Property("hours", th.IntegerType),
+                    th.Property("minutes", th.IntegerType),
+                    th.Property("seconds", th.IntegerType),
+                    th.Property("nanos", th.IntegerType),
+                )),
+            )),
+            th.Property("timeSeries", th.ObjectType(
+                th.Property("datedValues", th.ArrayType(th.ObjectType(
+                    th.Property("date", th.ObjectType(
+                        th.Property("year", th.IntegerType),
+                        th.Property("month", th.IntegerType),
+                        th.Property("day", th.IntegerType),
+                    )),
+                    th.Property("value", th.StringType),
+                ))),
+            )),
+        ))),
+    ).to_dict()
 
 class DailyMetricsTimeSeriesStream(GoogleBusinessPerformanceStream):
     """Daily Metrics Time Series stream."""
@@ -133,7 +192,16 @@ class DailyMetricsTimeSeriesStream(GoogleBusinessPerformanceStream):
     path = "/{location_name}:getDailyMetricsTimeSeries"
     primary_keys = ["location_name"]
     records_jsonpath = "$.timeSeries"
-    schema_filepath = SCHEMAS_DIR / "daily_metrics_time_series.json"
+    schema = th.PropertiesList(
+        th.Property("datedValues", th.ArrayType(th.ObjectType(
+            th.Property("date", th.ObjectType(
+                th.Property("year", th.IntegerType),
+                th.Property("month", th.IntegerType),
+                th.Property("day", th.IntegerType),
+            )),
+            th.Property("value", th.StringType),
+        ))),
+    ).to_dict()
 
 class SearchKeywordsImpressionsMonthlyStream(GoogleBusinessPerformanceStream):
     """Search Keywords Impressions Monthly stream."""
@@ -143,4 +211,10 @@ class SearchKeywordsImpressionsMonthlyStream(GoogleBusinessPerformanceStream):
     path = "/{location_name}/searchkeywords/impressions/monthly"
     primary_keys = ["location_name"]
     records_jsonpath = "$.searchKeywordsCounts[*]"
-    schema_filepath = SCHEMAS_DIR / "search_keywords_impressions_monthly.json"
+    schema = th.PropertiesList(
+        th.Property("searchKeyword", th.StringType),
+        th.Property("insightsValue", th.ObjectType(
+            th.Property("value", th.StringType),
+            th.Property("threshold", th.StringType),
+        )),
+    ).to_dict()

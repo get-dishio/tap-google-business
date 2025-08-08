@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "properties": {
+    "searchKeyword": {
+      "type": "string"
+    },
+    "insightsValue": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "threshold": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

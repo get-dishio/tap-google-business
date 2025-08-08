@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "tap-google-business"
+version = "0.1.0"
+description = "`tap-google-business` is a Singer tap for Google Business, built with the Meltano SDK for Singer Taps."
+authors = ["Raman Batra"]
+keywords = [
+    "ELT",
+    "GoogleBusiness",
+]
+license = "Apache 2.0"
+packages = [
+    { include = "tap_google_business" },
+]
+
+[tool.poetry.dependencies]
+python = ">=3.7.1, <3.11"
+requests = "^2.25.1"
+singer-sdk = "0.33.1"
+"backports.cached-property" = "^1.0.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "<8.3.4"
+tox = "<4.23.2"
+flake8 = "^5.0.4"
+black = "<24.8"
+pydocstyle = "^6.1.1"
+mypy = "<1.14"
+types-requests = "<2.32.0"
+responses = "<0.25.6"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+# CLI declaration
+tap-google-business = 'tap_google_business.tap:TapGoogleBusiness.cli'

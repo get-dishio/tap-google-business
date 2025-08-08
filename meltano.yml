@@ -1,0 +1,40 @@
+version: 1
+send_anonymous_usage_stats: true
+project_id: tap-google-business
+default_environment: test
+environments:
+- name: test
+plugins:
+  extractors:
+  - name: tap-google-business
+    namespace: tap_google_business
+    pip_url: -e .
+    capabilities:
+    - state
+    - catalog
+    - discover
+    settings:
+    - name: refresh_token
+      kind: string
+      sensitive: true
+    - name: client_id
+    - name: client_secret
+      kind: string
+      sensitive: true
+    - name: refresh_proxy_url
+      kind: string
+      hidden: true
+    - name: refresh_proxy_url_auth
+      kind: string
+      hidden: true
+    - name: account_id
+    - name: account_ids
+      kind: array
+    - name: start_date
+      kind: date_iso8601
+    - name: end_date
+      kind: date_iso8601
+  loaders:
+  - name: target-jsonl
+    variant: andyh1203
+    pip_url: target-jsonl
